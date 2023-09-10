@@ -140,18 +140,37 @@ def roi_align(feature_map, all_proposals, pooling_height, pooling_width):
     Returns:
         np.ndarray: An array of pooled ROI features.
     """
+    # Determine the batch size from the shape of all_proposals
     batch = np.shape(all_proposals)[0]
+    
+    # Loop through each image in the batch and its corresponding proposals
     for image_num, proposals in enumerate(all_proposals):
+        # Get the number of region of interest (ROI) proposals for the current image
         number_of_roi = np.shape(proposals)[0]
+        
+        # Determine the number of channels in the feature map
         number_of_channels = np.shape(feature_map)[3]
+        
+        # Initialize an output array to store the pooled ROIs
         output = np.zeros((batch, number_of_roi, int(pooling_height), int(pooling_width), number_of_channels))
-
+    
+        # Iterate through each ROI proposal in the current image
         for roi_number, region_of_interest in enumerate(proposals):
+            # Create a grid of sampling points within the ROI
             roi_grid = create_roi_grid(region_of_interest, int(pooling_height), int(pooling_width))
+            
+            # Iterate through each row and column of the ROI grid
             for row_number, row in enumerate(roi_grid):
                 for col_number, col in enumerate(row):
+                    # Generate sampling points within the current grid cell
                     sampling_points = generate_sample_points(col)
+                    
+                    # Determine the number of sampling points in the cell
                     number_of_sampling_points = np.shape(sampling_points)[0]
+                    
+                    # Perform bilinear interpolation to sample feature values
                     sampling_point_values = bilinear_interpolation(feature_map, sampling_points, image_num)
+                    
+                    # Compute the average value of sampled points and store it in the output array
                     output[image_num, roi_number, row_number, col_number, :] = np.sum(sampling_point_values, axis=0) / number_of_sampling_points
-        return output
+    return output

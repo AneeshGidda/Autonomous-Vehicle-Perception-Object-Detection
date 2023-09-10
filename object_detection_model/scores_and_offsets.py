@@ -30,6 +30,17 @@ def intersection_over_matrix(anchor_box, ground_truth_box):
     return iou
 
 def create_iou_matrix(anchor_boxes, ground_truth_boxes):
+    """
+    Computes the IoU matrix between a list of anchor boxes and a list of ground truth boxes.
+    Calculates IoU values for all possible pairs of anchor and ground truth boxes.
+
+    Args:
+        anchor_boxes (list): List of anchor boxes represented as [x_min, y_min, x_max, y_max].
+        ground_truth_boxes (list): List of ground truth bounding boxes represented as [x_min, y_min, x_max, y_max].
+
+    Returns:
+        np.ndarray: IoU matrix where each element (i, j) represents the IoU between anchor i and ground truth box j.
+    """
     iou_matrix = []
     for anchor_box in anchor_boxes:
         anchor_box_iou = []
@@ -41,6 +52,16 @@ def create_iou_matrix(anchor_boxes, ground_truth_boxes):
     return np.array(iou_matrix)
 
 def calculate_offsets(positive_anchors, ground_truth_boxes):
+    """
+    Calculates the offsets between positive anchor boxes and their corresponding ground truth boxes.
+
+    Args:
+        positive_anchors (tf.Tensor): Positive anchor boxes represented as [x_min, y_min, x_max, y_max].
+        ground_truth_boxes (tf.Tensor): Corresponding ground truth boxes represented as [x_min, y_min, x_max, y_max].
+
+    Returns:
+        tf.Tensor: Offsets for each positive anchor box in the format [tx, ty, tw, th].
+    """
     # Convert the box formats to (cx, cy, w, h) representation
     positive_anchors = convert_format(positive_anchors, mode="xyxy_to_cxcywh")
     ground_truth_boxes = convert_format(ground_truth_boxes, mode="xyxy_to_cxcywh")

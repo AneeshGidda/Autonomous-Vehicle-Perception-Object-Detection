@@ -1,29 +1,69 @@
+# Import necessary libraries
 import tensorflow as tf
 import numpy as np
 from scores_and_offsets import create_iou_matrix, calculate_offsets
 from convert import convert_format, convert_boxes
 from tqdm import tqdm
 
+# Function to compute anchor sizes based on a base size, scales, and ratios
 def compute_anchor_sizes(base_size, scales, ratios):
+    """
+    Compute anchor sizes for anchor boxes used in object detection.
+
+    Args:
+        base_size (float): The base size of the anchor box.
+        scales (list of floats): Scaling factors for anchor boxes.
+        ratios (list of floats): Aspect ratios for anchor boxes.
+
+    Returns:
+        list of tuples: A list of anchor sizes, each represented as (width, height).
+    """
     anchor_sizes = []
 
+    # Iterate through scales and ratios to calculate anchor sizes
     for scale in scales:
         for ratio in ratios:
+            # Compute width and height for the anchor box
             width = np.round(base_size * scale * np.sqrt(ratio))
             height = np.round(base_size * scale / np.sqrt(ratio))
             anchor_sizes.append((width, height))
     return anchor_sizes
 
+# Function to compute anchor centers based on a feature map
 def compute_anchor_centers(feature_map):
+    """
+    Compute anchor centers for anchor boxes based on a feature map's dimensions.
+
+    Args:
+        feature_map (Tensor): The feature map used for anchor generation.
+
+    Returns:
+        Tensor: Arrays of anchor x and y coordinates.
+    """
     height = np.shape(feature_map)[1]
     width = np.shape(feature_map)[2]
 
+    # Generate anchor x and y coordinates
     anchor_x = tf.range(0, width, dtype="float64") + 0.5
     anchor_y = tf.range(0, height, dtype="float64") + 0.5
     return anchor_x, anchor_y
 
+# Function to generate anchor boxes based on anchor x, anchor y, and anchor sizes
 def generate_anchor_boxes(anchor_x, anchor_y, anchor_sizes):
+    """
+    Generate anchor boxes based on anchor x, anchor y, and anchor sizes.
+
+    Args:
+        anchor_x (Tensor): Array of anchor x coordinates.
+        anchor_y (Tensor): Array of anchor y coordinates.
+        anchor_sizes (list of tuples): List of anchor sizes, each represented as (width, height).
+
+    Returns:
+        ndarray: Array of anchor boxes, each represented as [xmin, ymin, xmax, ymax].
+    """
     anchor_boxes = []
+
+    # Iterate through anchor x, anchor y, and anchor sizes to create anchor boxes
     for y in tqdm(anchor_y, desc="creating anchors"):
         for x in anchor_x:
             for w, h in anchor_sizes:
@@ -33,6 +73,7 @@ def generate_anchor_boxes(anchor_x, anchor_y, anchor_sizes):
                 ymax = y + h / 2
                 anchor_boxes.append([xmin, ymin, xmax, ymax])
     return np.array(anchor_boxes)
+
 
 
 

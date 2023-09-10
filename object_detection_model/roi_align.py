@@ -15,18 +15,27 @@ def create_roi_grid(region_of_interest, pooling_height, pooling_width):
     x_min, y_min, x_max, y_max = region_of_interest
     grid_width = x_max - x_min
     grid_height = y_max - y_min
-
+    
+    # Calculate the width and height of each square in the ROI grid
     square_width = grid_width / pooling_width
     square_height = grid_height / pooling_height
+    
+    # Initialize an array to store the ROI grid
     roi_grid = np.zeros(shape=(pooling_height, pooling_width, 4))
-
+    
+    # Loop through each row and column of the grid
     for row in range(int(pooling_height)):
         for col in range(int(pooling_width)):
+            # Calculate the coordinates of the current square
             square_x_min = x_min + col * square_width
             square_y_min = y_min + row * square_height
             square_x_max = square_x_min + square_width
             square_y_max = square_y_min + square_height
+    
+            # Create a square defined by [x_min, y_min, x_max, y_max]
             square = np.array([square_x_min, square_y_min, square_x_max, square_y_max])
+    
+            # Store the square in the ROI grid
             roi_grid[row, col] = square
     return roi_grid
 

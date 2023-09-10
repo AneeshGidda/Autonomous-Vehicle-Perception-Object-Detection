@@ -75,30 +75,43 @@ def bilinear_interpolation(feature_map, sampling_points, image_num):
     Returns:
         np.ndarray: An array of interpolated values.
     """
+    # Get the height and width of the feature map
     height = np.shape(feature_map)[1]
     width = np.shape(feature_map)[2]
-
+    
+    # Get the number of sampling points and number of channels in the feature map
     number_of_sampling_points = np.shape(sampling_points)[0]
     number_of_channels = np.shape(feature_map)[3]
+    
+    # Initialize an array to store the interpolated values
     output = np.zeros(shape=(number_of_sampling_points, number_of_channels))
-
+    
+    # Loop through each sampling point
     for i, (x, y) in enumerate(sampling_points):
+        # Convert the coordinates to integers for indexing
         x0, y0 = int(x), int(y)
         x1, y1 = x0 + 1, y0 + 1
-
+    
+        # Ensure that the indices are within valid bounds
         x0 = max(0, min(x0, width - 1))
         x1 = max(0, min(x1, width - 1))
         y0 = max(0, min(y0, height - 1))
         y1 = max(0, min(y1, height - 1))
-
+    
+        # Extract values from the feature map at the four nearest grid points
         f00 = feature_map[image_num, y0, x0, :]
         f01 = feature_map[image_num, y1, x0, :]
         f10 = feature_map[image_num, y0, x1, :]
         f11 = feature_map[image_num, y1, x1, :]
-
+    
+        # Calculate the fractional offsets within the grid square
         dx = x - x0
         dy = y - y0
+    
+        # Bilinear interpolation to compute the interpolated value
         interpolated_value = (1 - dx) * (1 - dy) * f00 + dx * (1 - dy) * f10 + (1 - dx) * dy * f01 + dx * dy * f11
+    
+        # Store the interpolated value in the output array
         output[i, :] = interpolated_value
     return output
 

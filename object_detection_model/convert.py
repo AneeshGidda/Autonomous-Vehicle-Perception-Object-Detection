@@ -2,6 +2,16 @@ import tensorflow as tf
 import numpy as np
 
 def convert_format(boxes, mode):
+    """
+    Convert bounding box format between 'xyxy' and 'cxcywh'.
+
+    Args:
+        boxes (Tensor): Bounding boxes in the original format.
+        mode (str): Conversion mode, either 'xyxy_to_cxcywh' or 'cxcywh_to_xyxy'.
+
+    Returns:
+        Tensor: Bounding boxes in the new format.
+    """
     if mode == "xyxy_to_cxcywh":
         x_min, y_min, x_max, y_max = tf.split(boxes, 4, axis=-1)
         cx = (x_min + x_max) / 2
@@ -18,8 +28,20 @@ def convert_format(boxes, mode):
         y_max = cy + (height / 2)
         xyxy_boxes = tf.concat([x_min, y_min, x_max, y_max], axis=-1)
         return xyxy_boxes
-    
+
 def convert_boxes(boxes, img_shape, feature_map, mode):
+    """
+    Convert bounding boxes between image and feature map coordinates.
+
+    Args:
+        boxes (ndarray): Bounding boxes in the original format.
+        img_shape (list): Shape of the input image [height, width, channels].
+        feature_map (Tensor): Feature map used for coordinate conversion.
+        mode (str): Conversion mode, either 'image_to_feature' or 'feature_to_image'.
+
+    Returns:
+        ndarray: Bounding boxes in the new coordinate system.
+    """
     img_height = img_shape[0]
     img_width = img_shape[1]
 
@@ -37,16 +59,16 @@ def convert_boxes(boxes, img_shape, feature_map, mode):
         boxes[:, [1, 3]] *= height_scale
     return boxes
 
-# def convert_proposals(proposals):
-#     for proposals in proposals:
-#         converted_proposals = []
-#         for proposal in proposals:  
-#             x1, y1, x2, y2 = proposal
-#             converted_proposal = [y1, x1, y2, x2]
-#             converted_proposals.append(converted_proposal)
-#     return np.reshape(converted_proposals, newshape=(1, -1, 4))
-
 def convert_proposals(proposals):
+    """
+    Convert bounding box proposals from 'xyxy' to 'yxyx' format.
+
+    Args:
+        proposals (ndarray): Bounding box proposals in 'xyxy' format.
+
+    Returns:
+        ndarray: Bounding box proposals in 'yxyx' format.
+    """
     batch = np.shape(proposals)[0]
     num_proposals = np.shape(proposals)[1]
     converted_proposals = np.zeros(shape=(batch, num_proposals, 4))

@@ -3,6 +3,16 @@ import tensorflow as tf
 from convert import convert_format
 
 def intersection_over_matrix(anchor_box, ground_truth_box):
+    """
+    Computes the Intersection over Union (IoU) between an anchor box and a ground truth box.
+
+    Args:
+        anchor_box (list): A bounding box represented as [x_min, y_min, x_max, y_max].
+        ground_truth_box (list): A ground truth bounding box represented as [x_min, y_min, x_max, y_max].
+
+    Returns:
+        float: The IoU value between the two input boxes.
+    """
     # Compute the coordinates of the intersection rectangle
     x1 = np.maximum(anchor_box[0], ground_truth_box[0])
     y1 = np.maximum(anchor_box[1], ground_truth_box[1])

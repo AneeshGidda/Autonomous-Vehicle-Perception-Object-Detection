@@ -51,15 +51,27 @@ def generate_sample_points(region_of_interest, horizontal_sampling_points=2, ver
     Returns:
         np.ndarray: An array representing the sampling points.
     """
+    # Extract the coordinates of the region of interest (ROI)
     x_min, y_min, x_max, y_max = region_of_interest
+    
+    # Calculate the width and height of the ROI
     width = x_max - x_min
     height = y_max - y_min
-
+    
+    # Initialize an empty list to store the sampling points
     sampling_points = []
+    
+    # Loop through vertical sampling points
     for iy in range(vertical_sampling_points):
+        # Calculate the y-coordinate of the current sampling point
         y_coordinate = y_min + (height / (vertical_sampling_points + 1)) * iy
+    
+        # Loop through horizontal sampling points
         for ix in range(horizontal_sampling_points):
+            # Calculate the x-coordinate of the current sampling point
             x_coordinate = x_min + (width / (horizontal_sampling_points + 1)) * ix
+    
+            # Append the [x, y] coordinates of the sampling point to the list
             sampling_points.append([x_coordinate, y_coordinate])
     return np.array(sampling_points)
 

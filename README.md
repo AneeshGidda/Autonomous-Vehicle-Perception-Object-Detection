@@ -8,7 +8,8 @@ This project aims to create a robust object detection system inspired by Faster 
 ## Feature Extraction
 
 **High-Level Feature Abstraction:** Our feature extraction module harnesses the power of deep neural networks to extract rich, high-level feature representations from input images. These representations empower our model with an unparalleled understanding of objects, greatly enhancing its ability to discern and classify them with unmatched accuracy.
-Precision Anchor Generation
+
+## Anchor Generation
 
 **Object Localization Excellence:** Our anchor generation techniques set the stage for precise object localization within images. These anchors act as precise reference points, significantly reducing the incidence of false positives in object detection.
 
